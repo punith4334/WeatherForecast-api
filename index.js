@@ -35,6 +35,28 @@ app.get('/', async (req, resp) => {
 });
 
 
+app.get('/getuser', async (req, resp) => {
+    try {
+        const { email, password } = req.query;
+    
+        if (!email || !password) {
+          return resp.status(400).json({ error: 'Email and password are required parameters.' });
+        }
+    
+        const user = await User.findOne({ email, password }, 'email password');
+    
+        if (user) {
+          resp.json(user);
+        } else {
+          resp.status(404).json({ error: 'User not found' });
+        }
+      } catch (e) {
+        console.error(e);
+        resp.status(500).send('Failed to retrieve user data');
+      }
+});
+
+
 app.post('/register', async (req, resp) => {
     console.log(req.body);
     try {
